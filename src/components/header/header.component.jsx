@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import { Link } from "react-router-dom";
 
 import { auth } from "../../firebase/firebase.utils";
@@ -13,10 +13,14 @@ import { ReactComponent as Logo } from "../../assets/crown.svg";
 import "./header.styles.scss";
 
 import CurrentUserContext from "../../contexts/current-user/current-user.context";
+import CartContext from "../../contexts/cart/cart.context";
 
 //THIS IS WHERE WE CONSUME THE DISPATCH DATA FROM PROVIDER (contextapi)
-const Header = ({ hidden }) => {
+const Header = () => {
   const currentUser = useContext(CurrentUserContext); //currentUser has dispatch props thru useContext and make the variable name same as below for dynamic user signin/signout
+  const [hidden, setHidden] = useState(true);
+  const toggleHidden = () => setHidden(!hidden);
+
   return (
     <div className="header">
       <Link className="logo-container" to="/">
@@ -38,7 +42,14 @@ const Header = ({ hidden }) => {
             SIGN IN
           </Link>
         )}
-        <CartIcon />
+        <CartContext.Provider
+          value={{
+            hidden,
+            toggleHidden
+          }}
+        >
+          <CartIcon />
+        </CartContext.Provider>
       </div>
       {hidden ? null : <CartDropdown />}
     </div>
